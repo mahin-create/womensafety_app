@@ -19,7 +19,8 @@ class _MappageState extends State<Mappage> {
   LatLng? _destination;
   List<LatLng> _routePoints = []; // Route to destination (blue)
   List<LatLng> _policeRoutePoints = []; // Route to police station (red)
-  List<Marker> _policeStationMarkers = []; // List to store police station markers
+  List<Marker> _policeStationMarkers =
+      []; // List to store police station markers
   TextEditingController _latitudeController = TextEditingController();
   TextEditingController _longitudeController = TextEditingController();
   bool _mapReady = false;
@@ -113,7 +114,8 @@ class _MappageState extends State<Mappage> {
       final response = await http.get(
         Uri.parse(url),
         headers: {
-          'User-Agent': 'YourAppName/1.0 (your.email@example.com)', // Replace with your app's user agent
+          'User-Agent':
+              'YourAppName/1.0 (your.email@example.com)', // Replace with your app's user agent
         },
       );
 
@@ -131,8 +133,12 @@ class _MappageState extends State<Mappage> {
           final name = place['display_name'];
 
           // Calculate distance to ensure it's within 50 km
-          final distance = _calculateDistance(_currentLocation!, LatLng(lat, lng));
-          if (distance <= 50000) { // 50 km in meters
+          final distance = _calculateDistance(
+            _currentLocation!,
+            LatLng(lat, lng),
+          );
+          if (distance <= 50000) {
+            // 50 km in meters
             policeMarkers.add(
               Marker(
                 point: LatLng(lat, lng),
@@ -141,7 +147,9 @@ class _MappageState extends State<Mappage> {
                 child: GestureDetector(
                   onTap: () {
                     _showSnackBar("Selected: $name");
-                    _fetchRouteToPoliceStation(LatLng(lat, lng)); // Fetch route to this police station
+                    _fetchRouteToPoliceStation(
+                      LatLng(lat, lng),
+                    ); // Fetch route to this police station
                   },
                   child: const Icon(
                     Icons.local_police,
@@ -153,12 +161,12 @@ class _MappageState extends State<Mappage> {
             );
           }
         }
-
         setState(() {
           _policeStationMarkers = policeMarkers;
           if (_mapReady && _policeStationMarkers.isNotEmpty) {
             final bounds = LatLngBounds.fromPoints(
-              _policeStationMarkers.map((m) => m.point).toList()..add(_currentLocation!),
+              _policeStationMarkers.map((m) => m.point).toList()
+                ..add(_currentLocation!),
             );
             _mapController.fitCamera(
               CameraFit.bounds(bounds: bounds, padding: EdgeInsets.all(50)),
@@ -166,7 +174,9 @@ class _MappageState extends State<Mappage> {
           }
         });
       } else {
-        _showSnackBar("Failed to fetch police stations: ${response.statusCode}");
+        _showSnackBar(
+          "Failed to fetch police stations: ${response.statusCode}",
+        );
       }
     } catch (e) {
       _showSnackBar("Error fetching police stations: $e");
@@ -188,10 +198,7 @@ class _MappageState extends State<Mappage> {
     try {
       final response = await http.post(
         Uri.parse(url),
-        headers: {
-          'Authorization': apiKey,
-          'Content-Type': 'application/json',
-        },
+        headers: {'Authorization': apiKey, 'Content-Type': 'application/json'},
         body: jsonEncode({
           'coordinates': [
             [_currentLocation!.longitude, _currentLocation!.latitude],
@@ -218,9 +225,12 @@ class _MappageState extends State<Mappage> {
 
         final List<dynamic> coordinates = geometry['coordinates'];
         setState(() {
-          _policeRoutePoints = coordinates
-              .map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
-              .toList();
+          _policeRoutePoints =
+              coordinates
+                  .map(
+                    (coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()),
+                  )
+                  .toList();
 
           if (_mapReady && _policeRoutePoints.isNotEmpty) {
             final bounds = LatLngBounds.fromPoints(_policeRoutePoints);
@@ -230,7 +240,9 @@ class _MappageState extends State<Mappage> {
           }
         });
       } else {
-        _showSnackBar("Failed to fetch route to police station: ${response.statusCode} - ${response.body}");
+        _showSnackBar(
+          "Failed to fetch route to police station: ${response.statusCode} - ${response.body}",
+        );
       }
     } catch (e) {
       _showSnackBar("Error fetching route to police station: $e");
@@ -244,12 +256,16 @@ class _MappageState extends State<Mappage> {
       return;
     }
 
-    double distanceInMeters = _calculateDistance(_currentLocation!, _destination!);
+    double distanceInMeters = _calculateDistance(
+      _currentLocation!,
+      _destination!,
+    );
     const double maxDistanceInMeters = 6000000.0;
 
     if (distanceInMeters > maxDistanceInMeters) {
       _showSnackBar(
-          "The route distance (${(distanceInMeters / 1000).toStringAsFixed(2)} km) exceeds the maximum allowed distance of 6,000 km.");
+        "The route distance (${(distanceInMeters / 1000).toStringAsFixed(2)} km) exceeds the maximum allowed distance of 6,000 km.",
+      );
       return;
     }
 
@@ -261,10 +277,7 @@ class _MappageState extends State<Mappage> {
     try {
       final response = await http.post(
         Uri.parse(url),
-        headers: {
-          'Authorization': apiKey,
-          'Content-Type': 'application/json',
-        },
+        headers: {'Authorization': apiKey, 'Content-Type': 'application/json'},
         body: jsonEncode({
           'coordinates': [
             [_currentLocation!.longitude, _currentLocation!.latitude],
@@ -291,9 +304,12 @@ class _MappageState extends State<Mappage> {
 
         final List<dynamic> coordinates = geometry['coordinates'];
         setState(() {
-          _routePoints = coordinates
-              .map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
-              .toList();
+          _routePoints =
+              coordinates
+                  .map(
+                    (coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()),
+                  )
+                  .toList();
 
           if (_mapReady && _routePoints.isNotEmpty) {
             final bounds = LatLngBounds.fromPoints(_routePoints);
@@ -303,7 +319,9 @@ class _MappageState extends State<Mappage> {
           }
         });
       } else {
-        _showSnackBar("Failed to fetch route: ${response.statusCode} - ${response.body}");
+        _showSnackBar(
+          "Failed to fetch route: ${response.statusCode} - ${response.body}",
+        );
       }
     } catch (e) {
       _showSnackBar("Error fetching route: $e");
@@ -328,7 +346,8 @@ class _MappageState extends State<Mappage> {
       setState(() {
         _destination = LatLng(lat, lng);
         _routePoints.clear();
-        _policeRoutePoints.clear(); // Clear police route when setting a new destination
+        _policeRoutePoints
+            .clear(); // Clear police route when setting a new destination
       });
       _fetchRoute();
     } catch (e) {
@@ -338,7 +357,9 @@ class _MappageState extends State<Mappage> {
 
   /// Helper method to show SnackBar
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -366,7 +387,7 @@ class _MappageState extends State<Mappage> {
                 TileLayer(
                   urlTemplate:
                       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: ['a', 'b', 'c'],
+                  //subdomains: ['a', 'b', 'c'],
                 ),
                 MarkerLayer(
                   markers: [
@@ -463,6 +484,12 @@ class _MappageState extends State<Mappage> {
         filled: true,
         fillColor: Colors.white,
         hintText: hint,
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black, width: 0.1),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.black, width: 0.1),
+        ),
       ),
       keyboardType: const TextInputType.numberWithOptions(
         decimal: true,
