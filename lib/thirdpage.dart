@@ -54,7 +54,7 @@ class _ThirdpageState extends State<Thirdpage> {
                         backgroundColor: Color(0xFF134B42),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => Fourthpage()),
                         );

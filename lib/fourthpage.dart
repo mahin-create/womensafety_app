@@ -54,7 +54,7 @@ class _FourthpageState extends State<Fourthpage> {
                         backgroundColor: Color(0xFF134B42),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => Homepage()),
                         );

@@ -35,28 +35,30 @@ class _DirectSmsScreenState extends State<DirectSmsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Add Phone Number")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: phoneController,
-              decoration: InputDecoration(
-                hintText: "Enter Phone Number",
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: Text("Add Phone Number")),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: phoneController,
+                decoration: InputDecoration(
+                  hintText: "Enter Phone Number",
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2),
+                  ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black, width: 2),
-                ),
+                keyboardType: TextInputType.phone,
               ),
-              keyboardType: TextInputType.phone,
-            ),
-            SizedBox(height: 10),
-            ElevatedButton(onPressed: sendSMS, child: Text("Send SMS")),
-          ],
+              SizedBox(height: 10),
+              ElevatedButton(onPressed: sendSMS, child: Text("Send SMS")),
+            ],
+          ),
         ),
       ),
     );

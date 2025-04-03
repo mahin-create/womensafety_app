@@ -58,7 +58,7 @@ class Secondpage extends StatelessWidget {
                         backgroundColor: Color(0xFF134B42),
                       ),
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => Thirdpage()),
                         );
