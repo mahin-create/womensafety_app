@@ -9,6 +9,7 @@ class DirectSmsScreen extends StatefulWidget {
 class _DirectSmsScreenState extends State<DirectSmsScreen> {
   final Telephony telephony = Telephony.instance;
   final TextEditingController phoneController = TextEditingController();
+  List<String> numbers=[];
 
   void sendSMS() async {
     String phoneNumber = phoneController.text.trim(); // Trim spaces
@@ -31,6 +32,7 @@ class _DirectSmsScreenState extends State<DirectSmsScreen> {
     } else {
       print("SMS permission denied.");
     }
+    
   }
 
   @override
@@ -42,21 +44,56 @@ class _DirectSmsScreenState extends State<DirectSmsScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                controller: phoneController,
-                decoration: InputDecoration(
-                  hintText: "Enter Phone Number",
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 2),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: phoneController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Phone Number",
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black, width: 2),
+                        ),
+                      ),
+                      keyboardType: TextInputType.phone,
+                    ),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black, width: 2),
-                  ),
-                ),
-                keyboardType: TextInputType.phone,
+              SizedBox(width: 5),
+              ElevatedButton(onPressed: (){
+                setState(() {
+                  sendSMS();
+                  numbers.add(phoneController.text);
+                  phoneController.clear();
+                });
+              }, child: Text("Send SMS")),
+                ],
               ),
-              SizedBox(height: 10),
-              ElevatedButton(onPressed: sendSMS, child: Text("Send SMS")),
+              SizedBox(height: 10,),
+              Flexible(child: ListView.builder(
+                itemCount: numbers.length,
+                itemBuilder: (context,index){
+                  return Container(
+                    padding: EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(child: Text(numbers[index])),
+                        IconButton(
+                          onPressed:(){
+                            setState(() {
+                          numbers.removeAt(index);
+                        }); 
+                          } ,
+                        icon: Icon(Icons.delete),
+                        color: Colors.red,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                ),),
             ],
           ),
         ),

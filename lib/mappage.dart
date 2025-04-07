@@ -364,117 +364,124 @@ class _MappageState extends State<Mappage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Map Page')),
-        body: Stack(
-          children: [
-            if (_currentLocation == null)
-              const Center(child: CircularProgressIndicator())
-            else
-              FlutterMap(
-                mapController: _mapController,
-                options: MapOptions(
-                  initialCenter: _currentLocation!,
-                  initialZoom: _zoomLevel,
-                  onMapReady: () {
-                    setState(() {
-                      _mapReady = true;
-                      _mapController.move(_currentLocation!, _zoomLevel);
-                    });
-                  },
+    return Scaffold(
+      appBar: AppBar(title: const Text('Map Page')),
+      body: Stack(
+        children: [
+          if (_currentLocation == null)
+            const Center(child: CircularProgressIndicator())
+          else
+            FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: _currentLocation!,
+                initialZoom: _zoomLevel,
+                onMapReady: () {
+                  setState(() {
+                    _mapReady = true;
+                    _mapController.move(_currentLocation!, _zoomLevel);
+                  });
+                },
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  //subdomains: ['a', 'b', 'c'],
                 ),
-                children: [
-                  TileLayer(
-                    urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    //subdomains: ['a', 'b', 'c'],
-                  ),
-                  MarkerLayer(
-                    markers: [
-                      if (_currentLocation != null)
-                        Marker(
-                          point: _currentLocation!,
-                          width: 40,
-                          height: 40,
-                          child: const Icon(
-                            Icons.location_on,
-                            color: Colors.green,
-                            size: 40,
-                          ),
+                MarkerLayer(
+                  markers: [
+                    if (_currentLocation != null)
+                      Marker(
+                        point: _currentLocation!,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.green,
+                          size: 40,
                         ),
-                      if (_destination != null)
-                        Marker(
-                          point: _destination!,
-                          width: 40,
-                          height: 40,
-                          child: const Icon(
-                            Icons.location_on,
-                            color: Colors.red,
-                            size: 40,
-                          ),
-                        ),
-                      ..._policeStationMarkers, // Add police station markers
-                    ],
-                  ),
-                  if (_routePoints.isNotEmpty)
-                    PolylineLayer(
-                      polylines: [
-                        Polyline(
-                          points: _routePoints,
-                          strokeWidth: 4.0,
-                          color: Colors.blue, // Route to destination in blue
-                        ),
-                      ],
-                    ),
-                  if (_policeRoutePoints.isNotEmpty)
-                    PolylineLayer(
-                      polylines: [
-                        Polyline(
-                          points: _policeRoutePoints,
-                          strokeWidth: 4.0,
-                          color: Colors.red, // Route to police station in red
-                        ),
-                      ],
-                    ),
-                ],
-              ),
-            Positioned(
-              top: 10,
-              left: 10,
-              right: 10,
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _inputField(_latitudeController, "Latitude"),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _inputField(_longitudeController, "Longitude"),
+                    if (_destination != null)
+                      Marker(
+                        point: _destination!,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                      ),
+                    ..._policeStationMarkers, // Add police station markers
+                  ],
+                ),
+                if (_routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _routePoints,
+                        strokeWidth: 4.0,
+                        color: Colors.blue, // Route to destination in blue
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                        onPressed: _setDestination,
-                        child: const Text("Get Route"),
-                      ),
-                      ElevatedButton(
-                        onPressed: _fetchNearbyPoliceStations,
-                        child: const Text("Show Police Stations"),
+                if (_policeRoutePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _policeRoutePoints,
+                        strokeWidth: 4.0,
+                        color: Colors.red, // Route to police station in red
                       ),
                     ],
                   ),
-                ],
-              ),
+              ],
             ),
-          ],
-        ),
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _inputField(_latitudeController, "Latitude"),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _inputField(_longitudeController, "Longitude"),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _setDestination,
+                      child: const Text("Get Route"),
+                    ),
+                    ElevatedButton(
+                      onPressed: _fetchNearbyPoliceStations,
+                      child: const Text("Show Police Stations"),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        setState(() {
+          _mapController.move(_currentLocation!, _zoomLevel);
+        });
+      },
+      child: Icon(
+        Icons.my_location
+      ),
       ),
     );
   }
